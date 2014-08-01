@@ -8,6 +8,15 @@ var Hsla = csk.Hsla;
   'use strict';
   
   var testGroups = {
+    funcs: [
+      csk(),
+      csk(255, 192, 128, 0.75),
+      csk([255, 192, 128, 0.75]),
+      csk('#39f'),
+      csk('hsla( 210, 100%, 50%, 0.75 )'),
+      csk({ r: 51, g: 153, b: 255, a: 0.75 }),
+      csk({ h: 210, s: 100, l: 50, a: 0.75 })
+    ],
     ctors: [
       new Rgba( 51, 150, 255, 0.75 ),
       new Hsla( 210, 100, 60, 0.75 ),
@@ -16,23 +25,12 @@ var Hsla = csk.Hsla;
       new Rgba( 'rgba( 51, 150, 255, 0.75 )' ),      
       new Hsla( 'hsl( 210, 100%, 50% )' ),
       new Hsla( 'hsla( 210, 100%, 50%, 0.75 )' ),
-    ],
-    funcs: [
+      new Rgba(),
+      new Hsla()
     ],
     converted: [
     ]
   };
-
-  testGroups.ctors.push(new Rgba());
-  testGroups.ctors.push(new Hsla());
-
-  testGroups.funcs.push(csk());
-  testGroups.funcs.push(csk(255, 192, 128, 0.75));
-  testGroups.funcs.push(csk([255, 192, 128, 0.75]));
-  testGroups.funcs.push(csk('#39f'));
-  testGroups.funcs.push(csk('hsla( 210, 100%, 50%, 0.75 )'));
-  testGroups.funcs.push(csk({ r: 51, g: 153, b: 255, a: 0.75 }));
-  testGroups.funcs.push(csk({ h: 210, s: 100, l: 50, a: 0.75 }));
 
   testGroups.converted.push( testGroups.ctors[ 0 ].hsla() );
   testGroups.converted.push( testGroups.ctors[ 1 ].rgba() );

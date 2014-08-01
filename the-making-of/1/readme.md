@@ -1,55 +1,59 @@
 #colorspace kit
 
 ```javascript
-var spaces = {
-	'rgba' : {
-		channels: {
-			r: 255,
-			g: 255,
-			b: 255,
-			a: 1
-		},
-    formats: {
-      hex: /^#(?:[0-9a-f]{3,6})\b$/i,
-      rgba: /^\s*rgba\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([0-9]+|[0-9]*\.[0-9]+)\s*\)\s*$/i,
-      rgb: /^\s*rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\s*$/i
-    },
-    converters: 
-      toHsla: function( rgba ){
-        var hsl = rgbToHsl( rgba );
-        return new Csk.Hsla( hsl.h, hsl.s, hsl.l, rgba.a );
-      }
-    },
-    toString: function( rgba ){
-      return 'rgba( ' + [ rgba.r, rgba.g, rgba.b, rgba.a ].join( ', ' ) + ' )';
+var _ = require( 'underscore' );
+var csk = require( './csk' );
+
+var Rgba = csk.Rgba;
+var Hsla = csk.Hsla;
+
+(function(){
+  'use strict';
+  
+  var testGroups = {
+    funcs: [
+      csk(),
+      csk(255, 192, 128, 0.75),
+      csk([255, 192, 128, 0.75]),
+      csk('#39f'),
+      csk('hsla( 210, 100%, 50%, 0.75 )'),
+      csk({ r: 51, g: 153, b: 255, a: 0.75 }),
+      csk({ h: 210, s: 100, l: 50, a: 0.75 })
+    ],
+    ctors: [
+      new Rgba( 51, 150, 255, 0.75 ),
+      new Hsla( 210, 100, 60, 0.75 ),
+      new Rgba( '#39f' ),      
+      new Rgba( 'rgb( 51, 150, 255 )' ),      
+      new Rgba( 'rgba( 51, 150, 255, 0.75 )' ),      
+      new Hsla( 'hsl( 210, 100%, 50% )' ),
+      new Hsla( 'hsla( 210, 100%, 50%, 0.75 )' ),
+      new Rgba(),
+      new Hsla()
+    ],
+    converted: [
+    ]
+  };
+
+  testGroups.converted.push( testGroups.ctors[ 0 ].hsla() );
+  testGroups.converted.push( testGroups.ctors[ 1 ].rgba() );
+
+  _( testGroups ).each( function( group, groupName ){
+    console.log( ( new Array( 60 ) ).join( '=' ) );  
+    console.log( groupName );  
+    console.log( ( new Array( 60 ) ).join( '=' ) );  
+    _( group ).each( logColor );    
+  });
+  
+  function logColor( color ){
+    if( color.space === 'rgba' && color.a === 1 ){
+      console.log( '  ' + color.toString( 'hex' ) );
+    } else {
+      console.log( '  ' + color.toString() );
     }
-	},
-	'hsla' : {
-		channels: {
-			h: 360,
-			s: 100,
-			l: 100,
-			a: 1
-		},
-    formats: {
-      hsla: /^\s*hsla\s*\(\s*(\d+)\s*,\s*([0-9]+|[0-9]*\.[0-9]+)%\s*,\s*([0-9]+|[0-9]*\.[0-9]+)%\s*,\s*([0-9]+|[0-9]*\.[0-9]+)\s*\)\s*$/i,
-      hsl: /^\s*hsl\s*\(\s*(\d+)\s*,\s*([0-9]+|[0-9]*\.[0-9]+)%\s*,\s*([0-9]+|[0-9]*\.[0-9]+)%\s*\)$\s*/i        
-    },
-    converters: {
-      toRgba: function( hsla ){
-        var rgb = Csk.hslToRgb( hsla );
-        return new Csk.Rgba( rgb.r, rgb.g, rgb.b, hsla.a );
-      }
-    },
-    toString: function( hsla ){
-      return 'hsla( ' + [ hsla.h, hsla.s + '%', hsla.l + '%', hsla.a ].join( ', ' ) + ' )';
-    }      
-	}
-};
-
-var csk = new Csk( spaces );
-
-var red = csk( '#f00' );
-var green = csk( 'rgba( 0, 255, 0, 0.9 )' );
-var blue = csk( 'hsla( 210, 100%, 50%, 0.9 )' ); 
+    console.log( '  ' + ( new Array( 56 ) ).join( '.' ) );  
+    console.log( '  ' + JSON.stringify( color ) );
+    console.log( ( new Array( 60 ) ).join( '-' ) );  
+  }  
+})();
 ```
